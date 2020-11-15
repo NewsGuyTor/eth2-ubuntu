@@ -24,10 +24,10 @@ This process assumes starting from first login on a clean Ubuntu 20.04 LTS insta
 ### Software Update
 After an initial install, it is a good idea to update everything to the latest versions.
 ```console
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
-sudo apt-get autoremove
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get dist-upgrade -y
+sudo apt-get autoremove -y
 sudo reboot
 ```
 
@@ -45,12 +45,12 @@ sudo timedatectl set-timezone <SELECTED_TIMEZONE>
 ### net-tools
 Installing net-tools in order to determine network device via ifconfig.
 ```console
-sudo apt-get install net-tools
+sudo apt-get install net-tools -y
 ```
 
 ### make
 ```console
-sudo apt-get install make
+sudo apt-get install make -y
 ```
 
 ## Prysm

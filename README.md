@@ -1,6 +1,6 @@
 # Setup an Eth2 Mainnet Validator System on Ubuntu
 
-This document contains instructions for setting up an Eth2 Mainnet staking system. Medalla testnet instructions are available [here](Prysm-Medalla.md).
+This document contains instructions for setting up an Eth2 Mainnet staking system. Medalla testnet instructions are available [here](prysm-medalla.md).
 
 These instructions have been developed to configure an Eth2 mainnet staking system using Ubuntu 20.04 LTS on an Intel NUC 10i5FNK with 2TB SSD and 32GB RAM. These instructions are primarily for my own purposes, so that I can recreate my environment if I need to. They are not intended to represent best practices and may not be applicable to your hardware, software, or network configuration. There are many other good sources for instructions on setting up these services, and those may be more generally written and applicable.
 
@@ -24,10 +24,10 @@ This process assumes starting from first login on a clean Ubuntu 20.04 LTS insta
 ### Software Update
 After an initial install, it is a good idea to update everything to the latest versions.
 ```console
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
-sudo apt-get autoremove
+sudo apt-get update -y ;
+sudo apt-get upgrade -y ;
+sudo apt-get dist-upgrade -y ;
+sudo apt-get autoremove -y ;
 sudo reboot
 ```
 
@@ -45,12 +45,12 @@ sudo timedatectl set-timezone <SELECTED_TIMEZONE>
 ### net-tools
 Installing net-tools in order to determine network device via ifconfig.
 ```console
-sudo apt-get install net-tools
+sudo apt-get install net-tools -y
 ```
 
 ### make
 ```console
-sudo apt-get install make
+sudo apt-get install make -y
 ```
 
 ## Prysm
