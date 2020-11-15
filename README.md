@@ -1,7 +1,6 @@
-
 # Setup an Eth2 Mainnet Validator System on Ubuntu
 
-This document contains instructions for setting up an Eth2 mainnet staking system. Medalla testnet instructions are available [here](prysm-medalla.md).
+This document contains instructions for setting up an Eth2 Mainnet staking system. Medalla testnet instructions are available [here](Prysm-Medalla.md).
 
 These instructions have been developed to configure an Eth2 mainnet staking system using Ubuntu 20.04 LTS on an Intel NUC 10i5FNK with 2TB SSD and 32GB RAM. These instructions are primarily for my own purposes, so that I can recreate my environment if I need to. They are not intended to represent best practices and may not be applicable to your hardware, software, or network configuration. There are many other good sources for instructions on setting up these services, and those may be more generally written and applicable.
 
@@ -188,13 +187,13 @@ sudo -u validator chmod 600 /home/validator/prysm-validator.yaml
 
 Follow the latest instructions at [launchpad.ethereum.org](https://launchpad.ethereum.org) or the correct launch pad for the network to which you will be connecting.
 
-Look for the latest eth2.0-deposit-cli [here](https://github.com/ethereum/eth2.0-deposit-cli/releases/).
+Look for the latest eth2.0-deposit-cli for *linux-amd64* [here](https://github.com/ethereum/eth2.0-deposit-cli/releases/).
 
 ```console
 cd
-wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v1.0.0/eth2deposit-cli-9310de0-linux-amd64.tar.gz
-tar xzvf eth2deposit-cli-9310de0-linux-amd64.tar.gz
-mv eth2deposit-cli-9310de0-linux-amd64 eth2deposit-cli
+wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/replace/eth2deposit-cli-replace-linux-amd64.tar.gz
+tar xzvf eth2deposit-cli-replace-linux-amd64.tar.gz
+mv eth2deposit-cli-replace-linux-amd64 eth2deposit-cli
 cd eth2deposit-cli
 ./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain mainnet
 ```
@@ -304,7 +303,7 @@ sudo adduser --system prometheus --group --no-create-home
 
 #### Install Prometheus
 
-Find the URL to the latest amd64 version of Prometheus at https://prometheus.io/download/. In the commands below, replace any references to the version 2.22.1 to the latest version available.
+Find the URL to the latest linux-amd64 version of Prometheus [here](https://prometheus.io/download/). In the commands below, replace any references to the version 2.22.1 to the latest version available.
 
 ```console
 cd
@@ -525,6 +524,8 @@ sudo adduser --system node_exporter --group --no-create-home
 ```
 
 #### Install node_exporter
+Find the URL to the latest linux-amd64 version of node_exporter [here](https://github.com/prometheus/node_exporter/releases). In the commands below, replace any references to the version 1.0.1 to the latest version available.
+
 ```console
 cd
 wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
@@ -577,12 +578,6 @@ From [this](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-
 ```console
 sudo apt-get install ntp
 ```
-Update the NTP pool time server configuration to those that are geographically close to you. See [http://support.ntp.org/bin/view/Servers/NTPPoolServers](http://support.ntp.org/bin/view/Servers/NTPPoolServers) to find servers near you.
-
-```console
-sudo nano /etc/ntp.conf
-```
-Look for lines that begin with `server` and replace the current values with the values you identified from ntp.org.
 
 Restart ntp. This will automatically shut down systemd-timesyncd, the default Ubuntu time syncing solution.
 
@@ -601,6 +596,9 @@ sudo adduser --system blackbox_exporter --group --no-create-home
 ```
 
 #### Install blackbox_exporter
+
+Find the URL to the latest linux-amd64 version of blackbox_exporter [https://github.com/prometheus/blackbox_exporter/releases](here). In the commands below, replace any references to the version 0.18.0 to the latest version available.
+
 ```console
 wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.18.0/blackbox_exporter-0.18.0.linux-amd64.tar.gz
 tar xvzf blackbox_exporter-0.18.0.linux-amd64.tar.gz
@@ -838,148 +836,6 @@ sudo ufw allow 9115/tcp
 # prometheus
 #   - This only needs to be enabled if you want to access prometheus directly.
 sudo ufw allow 9090/tcp
-```
-## Common Commands
-The following are some common commands you may want to use while running this setup.
-
-### Service Statuses
-To see the status of system services:
-
-```console
-sudo systemctl status beacon-chain
-sudo systemctl status validator
-sudo systemctl status geth
-sudo systemctl status prometheus
-sudo systemctl status grafana-server
-sudo systemctl status eth2stats
-sudo systemctl status node_exporter
-sudo systemctl status blackbox_exporter
-```
-
-Or, to see the status of all at once:
-```console
-sudo systemctl status beacon-chain validator geth prometheus grafana-server eth2stats node_exporter blackbox_exporter
-```
-### Service Logs
-To watch the logs in real time:
-
-```console
-sudo journalctl -u beacon-chain -f
-sudo journalctl -u validator -f
-sudo journalctl -u geth -f
-sudo journalctl -u prometheus -f
-sudo journalctl -u grafana-server -f
-sudo journalctl -u eth2stats -f
-sudo journalctl -u node_exporter -f
-sudo journalctl -u blackbox_exporter -f
-```
-### Restarting Services
-To restart a service:
-
-```console
-sudo systemctl restart beacon-chain
-sudo systemctl restart validator
-sudo systemctl restart geth
-sudo systemctl restart prometheus
-sudo systemctl restart grafana-server
-sudo systemctl restart eth2stats
-sudo systemctl restart node_exporter
-sudo systemctl restart blackbox_exporter
-```
-
-### Stopping Services
-Stopping a service is separate from disabling a service. Stopping a service stops the current execution of the server, but does not prohibit the service from starting again after a system reboot. If you intend for the service to stop running and to not restart after a reboot, you will want to stop and disable a service.
-
-To stop a service:
-
-```console
-sudo systemctl stop beacon-chain
-sudo systemctl stop validator
-sudo systemctl stop geth
-sudo systemctl stop prometheus
-sudo systemctl stop grafana-server
-sudo systemctl stop eth2stats
-sudo systemctl stop node_exporter
-sudo systemctl stop blackbox_exporter
-```
-
-**Important:** If you intend to stop the beacon chain and validator in order to run these services on a different system, stop the services using the instructions in this section, and disable these services following the instructions in the next section. You will be at risk of losing funds through slashing if you accidentally validate the same keys on two different systems, and failing to disable the services may result in your beacon chain and validator running again after a system reboot.
-
-### Disabling Services
-To disable a service so that it no longer starts automatically after a reboot:
-
-```console
-sudo systemctl disable beacon-chain
-sudo systemctl disable validator
-sudo systemctl disable geth
-sudo systemctl disable prometheus
-sudo systemctl disable grafana-server
-sudo systemctl disable eth2stats
-sudo systemctl disable node_exporter
-sudo systemctl disable blackbox_exporter
-```
-
-### Enabling Services
-To re-enable a service that has been disabled:
-
-```console
-sudo systemctl enable beacon-chain
-sudo systemctl enable validator
-sudo systemctl enable geth
-sudo systemctl enable prometheus
-sudo systemctl enable grafana-server
-sudo systemctl enable eth2stats
-sudo systemctl enable node_exporter
-sudo systemctl enable blackbox_exporter
-```
-### Starting Services
-Re-enabling a service will not necessarily start the service as well. To start a service that is stopped:
-
-```console
-sudo systemctl start beacon-chain
-sudo systemctl start validator
-sudo systemctl start geth
-sudo systemctl start prometheus
-sudo systemctl start grafana-server
-sudo systemctl start eth2stats
-sudo systemctl start node_exporter
-sudo systemctl start blackbox_exporter
-```
-
-### Upgrading Prysm
-Upgrading the Prysm beacon chain and validator clients is as easy as restarting the service when running the prysm.sh script as we are in these instructions. To upgrade to the latest release, simple restart the services.
-
-```console
-sudo systemctl restart beacon-chain
-sudo systemctl restart validator
-```
-
-### Changing systemd Service Files
-If you edit any of the systemd service files in `/etc/systemd/system` or another location, run the following command prior to restarting the affected service:
-
-```console
-sudo systemctl daemon-reload
-```
-Then restart the affected service:
-```console
-sudo systemctl restart SERVICE_NAME
-```
-
-- Replace SERVICE_NAME with the name of the service for which the service file was updated. For example, `sudo systemctl restart beacon-chain`.
-
-### Updating Prysm Options
-To update the configuration options of the beacon chain or validator, edit the Prysm configuration file located in the home directories for the services.
-
-```console
-sudo nano /home/validator/prysm-validator.yaml
-sudo nano /home/beacon/prysm-beacon.yaml
-```
-
-Then restart the services:
-
-```console
-sudo systemctl restart validator
-sudo systemctl restart beacon-chain
 ```
 
 ## Future Updates

@@ -1,6 +1,8 @@
-  
-# Setup an Eth2 Validator System on Ubuntu
-These instructions represent my current process for setting up an Eth2 staking system on Ubuntu 20.04 LTS on an Intel NUC 10i5FNK with 512GB SSD and 16GB RAM. These instructions are primarily for my own purposes, so that I can recreate my environment if I need to. They are not intended to represent best practices and may not be applicable to your hardware, software, or network configuration. There are many other good sources for instructions on setting up these services, and those may be more generally written and applicable.
+# Setup an Eth2 Medalla Validator System on Ubuntu
+
+This document contains instructions for setting up an Eth2 Medalla (testnet) staking system. Mainnet instructions are available [here](README.md).
+
+These instructions represent my current process for setting up an Eth2 staking system on Ubuntu 20.04 LTS on an Intel NUC 10i5FNK with 2TB SSD and 32GB RAM. These instructions are primarily for my own purposes, so that I can recreate my environment if I need to. They are not intended to represent best practices and may not be applicable to your hardware, software, or network configuration. There are many other good sources for instructions on setting up these services, and those may be more generally written and applicable.
 
 Setup includes installation and configuration of the following services, including setting up systemd to automatically run services, where applicable:
 
@@ -15,7 +17,7 @@ Setup includes installation and configuration of the following services, includi
 
 Steps to install and configure all software have been copied from or inspired by a number of sources, which are cited at the end of this file. Discord discussions may have provided additional details or ideas. In addition, though I have never been a professional Linux administrator, I have many years experience running Linux servers for a variety of public and private hobby projects, which may have informed some of my decisions, for better or worse.
 
-This process assumes starting from first login on a clean Ubuntu 20.04 LTS installation, and were last tested on August 1, 2020.
+This process assumes starting from first login on a clean Ubuntu 20.04 LTS installation, and were last tested on November 15, 2020.
 
 ## Prerequisities
 
@@ -190,15 +192,15 @@ sudo -u validator chmod 600 /home/validator/prysm-validator.yaml
 
 Follow the latest instructions at [medalla.launchpad.ethereum.org](https://medalla.launchpad.ethereum.org) or the correct launch pad for the network to which you will be connecting.
 
-Look for the latest eth2.0-deposit-cli [here](https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v0.4.1/eth2deposit-cli-3f4a79a-linux-amd64.tar.gz).
+Look for the latest eth2.0-deposit-cli for *linux-amd64* [here](https://github.com/ethereum/eth2.0-deposit-cli/releases) and add the correct filename below.
 
 ```console
 cd
-wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/v0.4.1/eth2deposit-cli-3f4a79a-linux-amd64.tar.gz
-tar xzvf eth2deposit-cli-3f4a79a-linux-amd64.tar.gz
-mv eth2deposit-cli-3f4a79a-linux-amd64 eth2deposit-cli
+wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/replace/eth2deposit-cli-replace-linux-amd64.tar.gz
+tar xzvf eth2deposit-cli-replace-linux-amd64.tar.gz
+mv eth2deposit-cli-replace-linux-amd64 eth2deposit-cli
 cd eth2deposit-cli
-./deposit --num_validators NUMBER_OF_VALIDATORS --chain medalla
+./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain medalla
 ```
 
 Change the `NUMBER_OF_VALIDATORS` to the number of validators you want to create. Follow the prompts and instructions.
@@ -210,10 +212,10 @@ The next step is to upload your deposit data file to the launchpad site. If you 
 Follow the instructions by dragging and dropping the deposit file into the launchpad site. Then continue to follow the instructions until your deposit transaction is successful.
 
 ```console
-sudo -u validator /home/validator/bin/prysm.sh validator accounts-v2 import --keys-dir=$HOME/eth2deposit-cli/validator_keys
+sudo -u validator /home/validator/bin/prysm.sh validator accounts import --keys-dir=$HOME/eth2deposit-cli/validator_keys
 ```
 
-Follow the prompts. The default wallet directory should be `/home/validator/.eth2validators/prysm-wallet-v2`. Use the same password used when you were prompted for a password while running `./deposit.sh --num_validators NUMBER_OF_VALIDATORS --chain medalla`.
+Follow the prompts. The default wallet directory should be `/home/validator/.eth2validators/prysm-wallet-v2`. Use the same password used when you were prompted for a password while running `./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain medalla`.
 
 Create a password file and make it readbable only to the validator account.
 
@@ -221,7 +223,7 @@ Create a password file and make it readbable only to the validator account.
 sudo -u validator touch /home/validator/.eth2validators/wallet-password.txt && sudo chmod 600 /home/validator/.eth2validators/wallet-password.txt
 ```
 
-Edit the file and put the password you entered into the `deposit.sh` tool into the `wallet-password.txt` file.
+Edit the file and put the password you entered into the `deposit` tool into the `wallet-password.txt` file.
 
 ```console
 sudo nano /home/validator/.eth2validators/wallet-password.txt
@@ -305,20 +307,19 @@ sudo adduser --system prometheus --group --no-create-home
 ```
 
 #### Install Prometheus
-
-Find the URL to the latest amd64 version of Prometheus at https://prometheus.io/download/. In the commands below, replace any references to the version 2.21.0 to the latest version available.
+Find the URL to the latest linux-amd64 version of Prometheus [here](https://prometheus.io/download/). In the commands below, replace any references to the version 2.22.1 to the latest version available.
 
 ```console
 cd
-wget https://github.com/prometheus/prometheus/releases/download/v2.21.0/prometheus-2.21.0.linux-amd64.tar.gz
-tar xzvf prometheus-2.21.0.linux-amd64.tar.gz
-cd prometheus-2.21.0.linux-amd64
+wget https://github.com/prometheus/prometheus/releases/download/v2.22.1/prometheus-2.22.1.linux-amd64.tar.gz
+tar xzvf prometheus-2.22.1.linux-amd64.tar.gz
+cd prometheus-2.22.1.linux-amd64
 sudo cp promtool /usr/local/bin/
 sudo cp prometheus /usr/local/bin/
 sudo chown root.root /usr/local/bin/promtool /usr/local/bin/prometheus
 sudo chmod 755 /usr/local/bin/promtool /usr/local/bin/prometheus
 cd
-rm prometheus-2.21.0.linux-amd64.tar.gz
+rm prometheus-2.22.1.linux-amd64.tar.gz
 ```
 
 #### Configure Prometheus
@@ -527,6 +528,8 @@ sudo adduser --system node_exporter --group --no-create-home
 ```
 
 #### Install node_exporter
+Find the URL to the latest linux-amd64 version of node_exporter [here](https://github.com/prometheus/node_exporter/releases). In the commands below, replace any references to the version 1.0.1 to the latest version available.
+
 ```console
 cd
 wget https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
@@ -579,12 +582,6 @@ From [this](https://www.digitalocean.com/community/tutorials/how-to-set-up-time-
 ```console
 sudo apt-get install ntp
 ```
-Update the NTP pool time server configuration to those that are geographically close to you. See [http://support.ntp.org/bin/view/Servers/NTPPoolServers](http://support.ntp.org/bin/view/Servers/NTPPoolServers) to find servers near you.
-
-```console
-sudo nano /etc/ntp.conf
-```
-Look for lines that begin with `server` and replace the current values with the values you identified from ntp.org.
 
 Restart ntp. This will automatically shut down systemd-timesyncd, the default Ubuntu time syncing solution.
 
@@ -603,10 +600,12 @@ sudo adduser --system blackbox_exporter --group --no-create-home
 ```
 
 #### Install blackbox_exporter
+Find the URL to the latest linux-amd64 version of blackbox_exporter [https://github.com/prometheus/blackbox_exporter/releases](here). In the commands below, replace any references to the version 0.18.0 to the latest version available.
+
 ```console
-wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.17.0/blackbox_exporter-0.17.0.linux-amd64.tar.gz
-tar xvzf blackbox_exporter-0.17.0.linux-amd64.tar.gz
-sudo cp blackbox_exporter-0.17.0.linux-amd64/blackbox_exporter /usr/local/bin/
+wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.18.0/blackbox_exporter-0.18.0.linux-amd64.tar.gz
+tar xvzf blackbox_exporter-0.18.0.linux-amd64.tar.gz
+sudo cp blackbox_exporter-0.18.0.linux-amd64/blackbox_exporter /usr/local/bin/
 sudo chown blackbox_exporter.blackbox_exporter /usr/local/bin/blackbox_exporter
 sudo chmod 755 /usr/local/bin/blackbox_exporter
 ```
@@ -617,7 +616,7 @@ sudo setcap cap_net_raw+ep /usr/local/bin/blackbox_exporter
 ```
 
 ```console
-rm blackbox_exporter-0.17.0.linux-amd64.tar.gz
+rm blackbox_exporter-0.18.0.linux-amd64.tar.gz
 ```
 
 #### Configure blackbox_exporter
@@ -842,7 +841,6 @@ sudo ufw allow 9115/tcp
 #   - This only needs to be enabled if you want to access prometheus directly.
 sudo ufw allow 9090/tcp
 ```
-
 
 ## Future Updates
 
