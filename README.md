@@ -24,10 +24,10 @@ This process assumes starting from first login on a clean Ubuntu 20.04 LTS insta
 ### Software Update
 After an initial install, it is a good idea to update everything to the latest versions.
 ```console
-sudo apt-get update -y ;
-sudo apt-get upgrade -y ;
-sudo apt-get dist-upgrade -y ;
-sudo apt-get autoremove -y ;
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get dist-upgrade -y
+sudo apt-get autoremove -y
 sudo reboot
 ```
 
