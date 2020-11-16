@@ -9,7 +9,7 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
 Press **Enter**.
 
-###Add *geth* to the list of packages to automatically upgrade
+### Add *geth* to the list of packages to automatically upgrade
 
 ```console
 sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
