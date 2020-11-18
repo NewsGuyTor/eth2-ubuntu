@@ -1,6 +1,6 @@
 # Setup an Eth2 Mainnet Validator System on Ubuntu
 
-This document contains instructions for setting up an Eth2 Mainnet staking system. Medalla testnet instructions are available [here](prysm-medalla.md).
+This document contains instructions for setting up an Eth2 Mainnet staking system. Pyrmont testnet instructions are available [here](Prysm-Pyrmont.md).
 
 These instructions have been developed to configure an Eth2 mainnet staking system using Ubuntu 20.04 LTS on an Intel NUC 10i5FNK with 2TB SSD and 32GB RAM. These instructions are primarily for my own purposes, so that I can recreate my environment if I need to. They are not intended to represent best practices and may not be applicable to your hardware, software, or network configuration. There are many other good sources for instructions on setting up these services, and those may be more generally written and applicable.
 
@@ -302,20 +302,19 @@ sudo adduser --system prometheus --group --no-create-home
 ```
 
 #### Install Prometheus
-
-Find the URL to the latest linux-amd64 version of Prometheus [here](https://prometheus.io/download/). In the commands below, replace any references to the version 2.22.1 to the latest version available.
+Find the URL to the latest linux-amd64 version of Prometheus [here](https://prometheus.io/download/). In the commands below, replace any references to the version 2.22.2 to the latest version available.
 
 ```console
 cd
-wget https://github.com/prometheus/prometheus/releases/download/v2.22.1/prometheus-2.22.1.linux-amd64.tar.gz
-tar xzvf prometheus-2.22.1.linux-amd64.tar.gz
-cd prometheus-2.22.1.linux-amd64
+wget https://github.com/prometheus/prometheus/releases/download/v2.22.2/prometheus-2.22.2.linux-amd64.tar.gz
+tar xzvf prometheus-2.22.2.linux-amd64.tar.gz
+cd prometheus-2.22.2.linux-amd64
 sudo cp promtool /usr/local/bin/
 sudo cp prometheus /usr/local/bin/
 sudo chown root.root /usr/local/bin/promtool /usr/local/bin/prometheus
 sudo chmod 755 /usr/local/bin/promtool /usr/local/bin/prometheus
 cd
-rm prometheus-2.22.1.linux-amd64.tar.gz
+rm prometheus-2.22.2.linux-amd64.tar.gz
 ```
 
 #### Configure Prometheus
@@ -596,7 +595,6 @@ sudo adduser --system blackbox_exporter --group --no-create-home
 ```
 
 #### Install blackbox_exporter
-
 Find the URL to the latest linux-amd64 version of blackbox_exporter [https://github.com/prometheus/blackbox_exporter/releases](here). In the commands below, replace any references to the version 0.18.0 to the latest version available.
 
 ```console

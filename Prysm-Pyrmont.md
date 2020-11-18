@@ -1,6 +1,6 @@
-# Setup an Eth2 Medalla Validator System on Ubuntu
+# Setup an Eth2 Pyrmont Validator System on Ubuntu
 
-This document contains instructions for setting up an Eth2 Medalla (testnet) staking system. Mainnet instructions are available [here](README.md).
+This document contains instructions for setting up an Eth2 Pyrmont (testnet) staking system. Mainnet instructions are available [here](README.md).
 
 These instructions represent my current process for setting up an Eth2 staking system on Ubuntu 20.04 LTS on an Intel NUC 10i5FNK with 2TB SSD and 32GB RAM. These instructions are primarily for my own purposes, so that I can recreate my environment if I need to. They are not intended to represent best practices and may not be applicable to your hardware, software, or network configuration. There are many other good sources for instructions on setting up these services, and those may be more generally written and applicable.
 
@@ -17,7 +17,7 @@ Setup includes installation and configuration of the following services, includi
 
 Steps to install and configure all software have been copied from or inspired by a number of sources, which are cited at the end of this file. Discord discussions may have provided additional details or ideas. In addition, though I have never been a professional Linux administrator, I have many years experience running Linux servers for a variety of public and private hobby projects, which may have informed some of my decisions, for better or worse.
 
-This process assumes starting from first login on a clean Ubuntu 20.04 LTS installation, and were last tested on November 15, 2020.
+This process assumes starting from first login on a clean Ubuntu 20.04 LTS installation, and were last tested on November 18, 2020.
 
 ## Prerequisities
 
@@ -144,7 +144,7 @@ http-web3provider: "http://YYY.YYY.YYY.YYY:8545"
 monitoring-host: "0.0.0.0"
 p2p-tcp-port: 13000
 p2p-udp-port: 12000
-medalla: true
+pyrmont: true
 accept-terms-of-use: true
 ```
 
@@ -153,7 +153,7 @@ accept-terms-of-use: true
  - Update `YYY.YYY.YYY.YYY` to the IP address of your Eth1 node.
  - The `p2p-tcp-port` and `p2p-udp-port` lines are optional if you use the
    default values of 13000 and 12000, respectively.
- - `medalla` can be changed to a different testnet. Mainnet instructions to be determined.
+ - `pyrmont` can be changed to a different testnet. Mainnet instructions to be determined.
 
 
 Change permissions of the file.
@@ -175,12 +175,12 @@ monitoring-host: "0.0.0.0"
 graffiti: "YOUR_GRAFFITI_HERE"
 beacon-rpc-provider: "127.0.0.1:4000"
 wallet-password-file: "/home/validator/.eth2validators/wallet-password.txt"
-medalla: true
+pyrmont: true
 accept-terms-of-use: true
 ```
 
 - `graffiti` can be changed to whatever text you would prefer.
-- `medalla` can be changed to a different testnet. Mainnet instructions to be determined.
+- `pyrmont` can be changed to a different testnet. Mainnet instructions to be determined.
 
 Change permissions of the file.
 
@@ -190,7 +190,7 @@ sudo -u validator chmod 600 /home/validator/prysm-validator.yaml
 
 ### Make Validator Deposits and Install Keys
 
-Follow the latest instructions at [medalla.launchpad.ethereum.org](https://medalla.launchpad.ethereum.org) or the correct launch pad for the network to which you will be connecting.
+Follow the latest instructions at [pyrmont.launchpad.ethereum.org](https://pyrmont.launchpad.ethereum.org) or the correct launch pad for the network to which you will be connecting.
 
 Look for the latest eth2.0-deposit-cli for *linux-amd64* [here](https://github.com/ethereum/eth2.0-deposit-cli/releases) and add the correct filename below.
 
@@ -200,7 +200,7 @@ wget https://github.com/ethereum/eth2.0-deposit-cli/releases/download/replace/et
 tar xzvf eth2deposit-cli-replace-linux-amd64.tar.gz
 mv eth2deposit-cli-replace-linux-amd64 eth2deposit-cli
 cd eth2deposit-cli
-./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain medalla
+./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain pyrmont
 ```
 
 Change the `NUMBER_OF_VALIDATORS` to the number of validators you want to create. Follow the prompts and instructions.
@@ -215,7 +215,7 @@ Follow the instructions by dragging and dropping the deposit file into the launc
 sudo -u validator /home/validator/bin/prysm.sh validator accounts import --keys-dir=$HOME/eth2deposit-cli/validator_keys
 ```
 
-Follow the prompts. The default wallet directory should be `/home/validator/.eth2validators/prysm-wallet-v2`. Use the same password used when you were prompted for a password while running `./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain medalla`.
+Follow the prompts. The default wallet directory should be `/home/validator/.eth2validators/prysm-wallet-v2`. Use the same password used when you were prompted for a password while running `./deposit new-mnemonic --num_validators NUMBER_OF_VALIDATORS --chain pyrmont`.
 
 Create a password file and make it readbable only to the validator account.
 
@@ -307,19 +307,19 @@ sudo adduser --system prometheus --group --no-create-home
 ```
 
 #### Install Prometheus
-Find the URL to the latest linux-amd64 version of Prometheus [here](https://prometheus.io/download/). In the commands below, replace any references to the version 2.22.1 to the latest version available.
+Find the URL to the latest linux-amd64 version of Prometheus [here](https://prometheus.io/download/). In the commands below, replace any references to the version 2.22.2 to the latest version available.
 
 ```console
 cd
-wget https://github.com/prometheus/prometheus/releases/download/v2.22.1/prometheus-2.22.1.linux-amd64.tar.gz
-tar xzvf prometheus-2.22.1.linux-amd64.tar.gz
-cd prometheus-2.22.1.linux-amd64
+wget https://github.com/prometheus/prometheus/releases/download/v2.22.2/prometheus-2.22.2.linux-amd64.tar.gz
+tar xzvf prometheus-2.22.2.linux-amd64.tar.gz
+cd prometheus-2.22.2.linux-amd64
 sudo cp promtool /usr/local/bin/
 sudo cp prometheus /usr/local/bin/
 sudo chown root.root /usr/local/bin/promtool /usr/local/bin/prometheus
 sudo chmod 755 /usr/local/bin/promtool /usr/local/bin/prometheus
 cd
-rm prometheus-2.22.1.linux-amd64.tar.gz
+rm prometheus-2.22.2.linux-amd64.tar.gz
 ```
 
 #### Configure Prometheus
@@ -672,7 +672,7 @@ sudo systemctl daemon-reload
 sudo systemctl start blackbox_exporter.service
 sudo systemctl enable blackbox_exporter.service
 ```
-
+<!---
 ### eth2stats
 eth2stats reports some basic beacon chain statistics to eth2stats.io. This service may not be supported in the long term, but it can provide valuable information regarding the status of other staking systems. This can be helpful to determine whether a problem is isolated to your system or whether it is a network-wide problem.
 
@@ -727,7 +727,7 @@ Restart=always
 RestartSec=5
 WorkingDirectory=/var/lib/eth2stats/
 User=eth2stats
-ExecStart=/usr/local/bin/eth2stats-client run --v --eth2stats.node-name="NODE_NAME" --eth2stats.addr="grpc.medalla.eth2stats.io:443" --beacon.metrics-addr="http://127.0.0.1:8080/metrics" --eth2stats.tls=true --beacon.type="prysm" --beacon.addr="127.0.0.1:4000" --data.folder=/var/lib/eth2stats
+ExecStart=/usr/local/bin/eth2stats-client run --v --eth2stats.node-name="NODE_NAME" --eth2stats.addr="grpc.pyrmont.eth2stats.io:443" --beacon.metrics-addr="http://127.0.0.1:8080/metrics" --eth2stats.tls=true --beacon.type="prysm" --beacon.addr="127.0.0.1:4000" --data.folder=/var/lib/eth2stats
 
 [Install]
 WantedBy=multi-user.target
@@ -735,14 +735,14 @@ WantedBy=multi-user.target
 
 Replace `NODE_NAME` with the name you would like to appear on eth2stats.io.
 
-These instructions were written during the Medalla testnet. The command-line flag `--eth2stats.addr` may need to be updated to a new address for later testnets or the mainnet.
+These instructions were written during the Pyrmont testnet. The command-line flag `--eth2stats.addr` may need to be updated to a new address for later testnets or the mainnet.
 
 ```console
 sudo systemctl daemon-reload
 sudo systemctl enable eth2stats.service
 sudo systemctl start eth2stats.service
 ```
-
+--->
 ## Router Configuration
 You may need to configure your router to forward the following ports to your staking system. See your router documentation for details.
 
