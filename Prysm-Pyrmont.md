@@ -747,8 +747,11 @@ sudo systemctl start eth2stats.service
 You may need to configure your router to forward the following ports to your staking system. See your router documentation for details.
 
 Prysm Beacon Chain: 12000/udp
+
 Prysm Beacon Chain: 13000/tcp
+
 geth: 30303/udp
+
 geth: 30303/tcp
 
 
