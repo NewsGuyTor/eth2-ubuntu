@@ -168,7 +168,7 @@ sudo -u beacon chmod 600 /home/beacon/prysm-beacon.yaml
 sudo -u validator nano /home/validator/prysm-validator.yaml
 ```
 
-Copy and paste the following text into the prysm-beacon.yaml configuration file.
+Copy and paste the following text into the prysm-validator.yaml configuration file.
 
 ```
 monitoring-host: "0.0.0.0"
@@ -600,7 +600,7 @@ sudo adduser --system blackbox_exporter --group --no-create-home
 ```
 
 #### Install blackbox_exporter
-Find the URL to the latest linux-amd64 version of blackbox_exporter [https://github.com/prometheus/blackbox_exporter/releases](here). In the commands below, replace any references to the version 0.18.0 to the latest version available.
+Find the URL to the latest linux-amd64 version of blackbox_exporter [here](https://github.com/prometheus/blackbox_exporter/releases). In the commands below, replace any references to the version 0.18.0 to the latest version available.
 
 ```console
 wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.18.0/blackbox_exporter-0.18.0.linux-amd64.tar.gz
