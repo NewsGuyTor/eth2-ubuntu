@@ -48,9 +48,10 @@ Installing net-tools in order to determine network device via ifconfig.
 sudo apt-get install net-tools -y
 ```
 
-### make
+### make and curl
 ```console
 sudo apt-get install make -y
+sudo apt-get install curl -y
 ```
 
 ## Prysm
@@ -139,21 +140,17 @@ Copy and paste the following text into the prysm-beacon.yaml configuration file.
 
 ```
 datadir: "/home/beacon/prysm"
-p2p-host-ip: "XXX.XXX.XXX.XXX"
 http-web3provider: "http://YYY.YYY.YYY.YYY:8545"
-monitoring-host: "0.0.0.0"
 p2p-tcp-port: 13000
 p2p-udp-port: 12000
 pyrmont: true
 accept-terms-of-use: true
 ```
 
- - If you have a dynamic IP address, remove the `p2p-host-ip` line.
-   Otherwise, update `XXX.XXX.XXX.XXX` to your external IP address.
- - Update `YYY.YYY.YYY.YYY` to the IP address of your Eth1 node.
+ - Update `YYY.YYY.YYY.YYY` to the local IP address of your Eth1 node.
  - The `p2p-tcp-port` and `p2p-udp-port` lines are optional if you use the
    default values of 13000 and 12000, respectively.
- - `pyrmont` can be changed to a different testnet. Mainnet instructions to be determined.
+ - `pyrmont` can be changed to a different testnet. 
 
 
 Change permissions of the file.
@@ -171,7 +168,6 @@ sudo -u validator nano /home/validator/prysm-validator.yaml
 Copy and paste the following text into the prysm-validator.yaml configuration file.
 
 ```
-monitoring-host: "0.0.0.0"
 graffiti: "YOUR_GRAFFITI_HERE"
 beacon-rpc-provider: "127.0.0.1:4000"
 wallet-password-file: "/home/validator/.eth2validators/wallet-password.txt"
@@ -180,7 +176,7 @@ accept-terms-of-use: true
 ```
 
 - `graffiti` can be changed to whatever text you would prefer.
-- `pyrmont` can be changed to a different testnet. Mainnet instructions to be determined.
+- `pyrmont` can be changed to a different testnet.
 
 Change permissions of the file.
 
